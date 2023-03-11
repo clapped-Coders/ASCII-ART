@@ -10,9 +10,6 @@ using namespace std;
 
 int main()
 {
-    cout << "nothgin" << endl;
-    cout << "updated" << endl;
-
     textAsciiArt();
     
     return 0;
