@@ -19,9 +19,13 @@ int imageAsciiArt()
 
 int textAsciiArt() {
     string gscale = "@%#*+=-:. ";
+
     //string gscale = "$@B%8&amp;WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~i!lI;:,^`. ";
 
+    int gscale_len = gscale.length() - 1;
+
     Mat image;
+    Mat resized_image;
 
     image = imread("C:\\Users\\Dell\\Desktop\\pfp.png");
     if (!image.data)
@@ -33,8 +37,23 @@ int textAsciiArt() {
     // Display the original and binned images
     //imshow("Original Image", image);
 
-    const int col = image.cols;
-    const int row = image.rows;
+    int col = image.cols;
+    int row = image.rows;    
+
+    if ( col > 100 && col < 600) {
+        resize(image, resized_image, Size(), 0.2, 0.2, INTER_LINEAR);
+        col = resized_image.cols;
+        row = resized_image.rows;
+    }
+    else if (col >= 500 && col <= 2000) {
+        resize(image, resized_image, Size(), 0.1, 0.1, INTER_LINEAR);
+        col = resized_image.cols;
+        row = resized_image.rows;
+    } 
+    else if (col > 2000) {
+        cout << "File too large to convert to ASCII Art!" << endl;
+        return -1;
+    }   
 
     int** pxArry;
     //Allocating the row space in heap dynamically
@@ -54,13 +73,14 @@ int textAsciiArt() {
     {
         for (int j = 0; j < col; j++) 
         {
-            Vec3b px = image.at<Vec3b>(i, j);
+            Vec3b px = resized_image.at<Vec3b>(i, j);
             uchar b = px[0];
             uchar g = px[1];
             uchar r = px[2];
             int luminence = getLuminence(b, g, r);
-            char ascii_char = gscale[9 - int((luminence * 9) / 255)];
+            char ascii_char = gscale[gscale_len - int((luminence * gscale_len) / 255)];
             file << ascii_char;
+            file << " ";
         }
         file << endl;
     }
