@@ -10,24 +10,41 @@ int getLuminence(uchar b, uchar g, uchar r) {
 
 int imageAsciiArt()
 {
+    ifstream infile("asciii.txt");
+
+    vector<string> lines;
+    string line;
+
+
+    while (getline(infile, line)) {
+        lines.push_back(line);
+    }
+
+    infile.close();
+
     Mat canvas;
-    canvas = Mat::zeros(800, 1000, CV_8UC3);
+    canvas = Mat::zeros(600, 800, CV_8UC3);
+    int y = 10;
+
+    for (string line : lines) {
+        putText(canvas, line, Point(10, y), FONT_HERSHEY_PLAIN, 0.5, Scalar(255, 255, 255), 1);
+        y += 10;
+    }
+
     imshow("canvas", canvas);
-    waitKey(0);
     return 0;
 }
 
-int textAsciiArt() {
-    string gscale = "@%#*+=-:. ";
+int textAsciiArt(Mat webcam_image) {
+    const string gscale = "@%#*+=-:.   ";
 
     //string gscale = "$@B%8&amp;WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~i!lI;:,^`. ";
 
     int gscale_len = gscale.length() - 1;
 
-    Mat image;
+    Mat image = webcam_image;
     Mat resized_image;
 
-    image = imread("C:\\Users\\Dell\\Desktop\\pfp.png");
     if (!image.data)
     {
         printf("No image data \n");
@@ -93,5 +110,32 @@ int textAsciiArt() {
     delete[] pxArry;
     file.close();
 
+    return 0;
+}
+
+int videoCapture() {
+    VideoCapture cap(0);
+    if (!cap.isOpened()) {
+        cerr << "Unable to open the webcam!" << endl;
+        return -1;
+
+    }
+    Mat frame;
+    while (true) {
+        cap >> frame;
+        if (frame.empty()) {
+            cerr << "Unable to capture frame!" << endl;
+            break;
+        }
+        imshow("Webcam", frame);
+        if (waitKey(1) == 27) {
+            break;
+        }
+        textAsciiArt(frame);
+        imageAsciiArt();
+
+    }
+    cap.release();
+    destroyAllWindows();
     return 0;
 }
