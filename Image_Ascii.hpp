@@ -4,5 +4,6 @@
 int getLuminence();
 int imageAsciiArt();
 int textAsciiArt();
+int videoCapture();
 
 #endif // !Image_Ascii
