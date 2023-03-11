@@ -2,15 +2,13 @@
 
 #include "Image_Ascii.hpp"
 
-int imageAsciiArt();
-
-
 using namespace std;
-
 
 int main()
 {
-    textAsciiArt();
+    videoCapture();
+    //textAsciiArt();
+    //imageAsciiArt();
     
     return 0;
 }
