@@ -1,16 +1,29 @@
-#include <opencv2/opencv.hpp>
+#include "opencv2/opencv.hpp"
 #include <fstream>
+#include "raylib.h"
+
 
 using namespace cv;
 using namespace std;
+
+
+// #include <iostream>
+// // #include "Image_Ascii.hpp"
+
+// using namespace std;
+
+
+
+
 
 int getLuminence(uchar b, uchar g, uchar r) {
     return int(0.2126 * r + 0.7152 * g + 0.0722 * b);
 }
 
-int imageAsciiArt()
+int imageAsciiArt(void)
 {
     ifstream infile("asciii.txt");
+
 
     vector<string> lines;
     string line;
@@ -22,25 +35,53 @@ int imageAsciiArt()
 
     infile.close();
 
-    Mat canvas;
-    canvas = Mat::zeros(600, 800, CV_8UC3);
-    int y = 10;
+    const int screenWidth = 1500;
+    const int screenHeight = 1500;
+    float y = 10;
+    Font font = LoadFont("/Users/macbook/my_Files/Code/ASCII-ART/ASCII-ART/AlmaMono-Regular.ttf");
 
-    for (string line : lines) {
-        putText(canvas, line, Point(10, y), FONT_HERSHEY_PLAIN, 0.5, Scalar(255, 255, 255), 1);
-        y += 10;
+    InitWindow(screenWidth, screenHeight, "ASCII-ART");
+
+    SetTargetFPS(60);               
+
+    while (!WindowShouldClose()) 
+    {
+        BeginDrawing();
+
+            ClearBackground(BLACK);
+            
+            for (string line : lines) {
+
+                char* text = line.c_str();
+                DrawTextEx(font, *text, Vector2{0, y}, 20, 0, WHITE);
+                y += 10;
+            }
+
+            
+
+        EndDrawing();
     }
 
-    imshow("canvas", canvas);
+    CloseWindow();   
+
+    // Mat canvas = Mat::zeros(600, 800, CV_8UC3);
+    // int y = 10;
+
+    // for (string line : lines) {
+    //     putText(canvas, line, Point(10, y), FONT_HERSHEY_PLAIN, 0.5, Scalar(255, 255, 255), 1);
+    //     y += 10;
+    // }
+
+    // imshow("canvas", canvas);
     return 0;
 }
 
 int textAsciiArt(Mat webcam_image) {
     const string gscale = "@%#*+=-:.   ";
 
-    //string gscale = "$@B%8&amp;WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~i!lI;:,^`. ";
+    // string gscale = "$@B%8&amp;WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~i!lI;:,^`. ";
 
-    int gscale_len = gscale.length() - 1;
+    unsigned long int gscale_len = gscale.length() - 1;
 
     Mat image = webcam_image;
     Mat resized_image;
@@ -122,7 +163,7 @@ int videoCapture() {
     }
     Mat frame;
     while (true) {
-        cap >> frame;
+        cap  >> frame;
         if (frame.empty()) {
             cerr << "Unable to capture frame!" << endl;
             break;
@@ -139,3 +180,13 @@ int videoCapture() {
     destroyAllWindows();
     return 0;
 }
+
+
+
+
+// int main()
+// {
+//     videoCapture();
+    
+//     return 0;
+// }
